@@ -1,0 +1,19 @@
+mixin pagination(paginationObject)
+    nav
+        ul(class="pagination")
+            li(class="page-item") 
+                    button(class="page-link" button-pagination=1) First
+            if (paginationObject.currentPage > 1)
+                li(class="page-item") 
+                    button(class="page-link" button-pagination=paginationObject.currentPage - 1) Prev
+            - for (var i = paginationObject.currentPage; i <= Math.min(paginationObject.totalPage, paginationObject.currentPage + 2); ++i)
+                li(class="page-item")  
+                    if (i == paginationObject.currentPage)
+                        button(class="page-link active" button-pagination=i) #{i}
+                    else 
+                        button(class="page-link" button-pagination=i) #{i}
+            if (paginationObject.currentPage < paginationObject.totalPage)
+                li(class="page-item" button-pagination=paginationObject.currentPage + 1) 
+                    button(class="page-link") Next
+            li(class="page-item" button-pagination=paginationObject.totalPage) 
+                    button(class="page-link") Last     

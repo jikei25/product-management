@@ -1,6 +1,8 @@
 extends ../../layouts/default
 include ../../mixins/filter
 include ../../mixins/search
+include ../../mixins/pagination
+
 block main
     h1 #{title}
     .card.mb-3
@@ -40,6 +42,7 @@ block main
                             td 
                                 button(class="btn btn-warning btn-sm") Sửa
                                 button(class="btn btn-danger btn-sm ml-1") Xóa  
-
+            
+    +pagination(pagination)
 
         

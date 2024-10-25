@@ -30,3 +30,15 @@ if (formSearch) {
         window.location.href = url.href;
     });
 }
+
+const paginationButtons = document.querySelectorAll("[button-pagination]");
+if (paginationButtons) {
+    paginationButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            let url = new URL(location.href);
+            const page = button.getAttribute("button-pagination");
+            url.searchParams.set("page", page);
+            location.href = url.href;
+        });
+    });
+}

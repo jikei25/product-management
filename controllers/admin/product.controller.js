@@ -1,6 +1,7 @@
 const Product = require("../../models/product.model");
 const filter = require("../../helpers/filter");
 const search = require("../../helpers/search");
+const pagination = require("../../helpers/pagination");
 
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
@@ -17,14 +18,15 @@ module.exports.index = async (req, res) => {
     if (searchObject.regex) {
         find.title = searchObject.regex;
     }
-    
 
+    const paginationObject = await pagination(req, Product, find);
 
-    const products = await Product.find(find);
+    const products = await Product.find(find).skip(paginationObject.skip).limit(paginationObject.limit);
     res.render("admin/pages/product/index", {
         title: "Danh sách sản phẩm",
         products: products,
         buttons: filterStatus,
-        keyword: searchObject.keyword
+        keyword: searchObject.keyword,
+        pagination: paginationObject
     });
 };
