@@ -1,11 +1,16 @@
 extends ../../layouts/default
+include ../../mixins/filter
+include ../../mixins/search
 block main
     h1 #{title}
     .card.mb-3
         .card-header Bộ lọc và Tìm kiếm
         .card-body
-            each button in buttons 
-                button(class=`btn btn-sm ml-1 btn-outline-success ${button.class}` button-status=`${button.status}`) #{button.content}
+            .row
+                .col-6
+                    +filter(buttons)
+                .col-6  
+                    +search(keyword)
             
     .card.mb-3
         .card-header Sản phẩm
