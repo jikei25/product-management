@@ -9,11 +9,12 @@ const port = process.env.PORT;
 const router = require("./routes/client/index.route");
 const adminRouter = require("./routes/admin/index.route");
 const systemConfig = require("./config/system");
-
+const methodOverride = require('method-override')
 
 app.set("views", "./views");
 app.set("view engine", "pug")
 app.use(express.static("public"));
+app.use(methodOverride('_method'))
 
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
 

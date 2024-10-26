@@ -10,7 +10,7 @@ if (buttons.length > 0) {
             } else {
                 url.searchParams.delete("status");
             }
-
+            url.searchParams.delete("page");
             window.location.href = url;
         });
     });
@@ -42,3 +42,4 @@ if (paginationButtons) {
         });
     });
 }
+
