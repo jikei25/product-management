@@ -4,6 +4,8 @@ require('dotenv').config();
 const database = require("./config/database"); 
 database.connect();
 
+const bodyParser = require('body-parser');
+
 const app = express();
 const port = process.env.PORT;
 const router = require("./routes/client/index.route");
@@ -12,9 +14,10 @@ const systemConfig = require("./config/system");
 const methodOverride = require('method-override')
 
 app.set("views", "./views");
-app.set("view engine", "pug")
+app.set("view engine", "pug");
 app.use(express.static("public"));
-app.use(methodOverride('_method'))
+app.use(methodOverride('_method'));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
 

@@ -15,3 +15,48 @@ if (changeStatusButtons.length > 0) {
         });
     });
 }
+
+// Change Status Multi
+
+const checkAllButton = document.querySelector("input[name='checkall']");
+const checkIdButtons = document.querySelectorAll("input[name='id']");
+if (checkAllButton) {
+    checkAllButton.addEventListener("click", () => {
+        checkIdButtons.forEach(button => {
+            if (checkAllButton.checked) {
+                button.checked = true;
+            } else {
+                button.checked = false;
+            }
+        });
+    });
+    
+    checkIdButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const checkCount = document.querySelectorAll("input[name='id']:checked").length;
+            if (checkCount == checkIdButtons.length) {
+                checkAllButton.checked = true;
+            } else {
+                checkAllButton.checked = false;
+            }
+        });
+    });
+}
+
+const formChangeMulti = document.querySelector("[form-change-multi]");
+formChangeMulti.addEventListener("submit", (event) => {
+    const isCheckedButtons = document.querySelectorAll("input[name='id']:checked");
+    const statusIds = formChangeMulti.querySelector("input[name='ids']");
+    if (isCheckedButtons.length > 0) {
+        let ids = [];
+        isCheckedButtons.forEach(button => {
+            ids.push(button.getAttribute("value"));
+        });
+        statusIds.value = ids.join(", ");
+        //formChangeMulti.submit();
+    } else {
+        event.preventDefault();
+        alert("Vui lòng chọn ít nhất một ô");
+    }
+});
+// End Change Status Multi
