@@ -52,3 +52,11 @@ module.exports.changeMulti = async (req, res) => {
     const backURL=req.header('Referer') || '/';
     res.redirect(backURL);
 };
+
+// [DELETE] /admin/products/delete/:id
+module.exports.deleteItem = async (req, res) => {
+    const id = req.params.id;
+    await Product.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
+    const backURL=req.header('Referer') || '/';
+    res.redirect(backURL);
+};  

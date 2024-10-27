@@ -2,9 +2,11 @@ mixin change-multi-status()
     form(action=`${prefixAdmin}/products/change-multi?_method=PATCH` method="post" form-change-multi)
         .d-flex.align-items-start 
             .form-group
-                select(name="type" class="form-select")
+                select(name="type" id="change-status-multi" class="form-select")
+                    option(selected disabled value="not-selected") --Chọn hoạt động--
                     option(value="active") Hoạt động
                     option(value="inactive") Dừng hoạt động
+                    option(value="delete-all") Xóa tất cả
             .form-group 
                 input(type="text" name="ids" value="" class="form-control d-none")
             button(type="submit" class="btn btn-primary") Áp dụng    
