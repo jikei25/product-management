@@ -1,4 +1,4 @@
-// Button Status
+// Filter
 const buttons = document.querySelectorAll("[button-status]");
 if (buttons.length > 0) {
     buttons.forEach((button) => {
@@ -15,7 +15,9 @@ if (buttons.length > 0) {
         });
     });
 }
+// End Filter
 
+// Search
 const formSearch = document.querySelector("#form-search");
 if (formSearch) {
     let url = new URL(window.location.href);
@@ -30,7 +32,9 @@ if (formSearch) {
         window.location.href = url.href;
     });
 }
+// End Search
 
+// Pagination
 const paginationButtons = document.querySelectorAll("[button-pagination]");
 if (paginationButtons) {
     paginationButtons.forEach((button) => {
@@ -42,4 +46,4 @@ if (paginationButtons) {
         });
     });
 }
-
+// End Pagination

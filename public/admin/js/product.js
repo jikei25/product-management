@@ -1,3 +1,4 @@
+// Change status
 const changeStatusButtons = document.querySelectorAll("[button-change-status]");
 if (changeStatusButtons.length > 0) {
     const form = document.querySelector("#form-change-status");
@@ -15,9 +16,9 @@ if (changeStatusButtons.length > 0) {
         });
     });
 }
+// End Change status
 
 // Change Status Multi
-
 const checkAllButton = document.querySelector("input[name='checkall']");
 const checkIdButtons = document.querySelectorAll("input[name='id']");
 if (checkAllButton) {
@@ -42,28 +43,34 @@ if (checkAllButton) {
         });
     });
 }
-
 const formChangeMulti = document.querySelector("[form-change-multi]");
 formChangeMulti.addEventListener("submit", (event) => {
     const selected = document.querySelector("#change-status-multi");
-
+    const isCheckedButtons = document.querySelectorAll("input[name='id']:checked");
+    const statusIds = formChangeMulti.querySelector("input[name='ids']"); // will be sent to BE
+    
+    event.preventDefault();
     if (selected.value == "not-selected") {
-        event.preventDefault();
         alert("Vui lòng chọn ít nhất một hành động");
         return;
-    }
-    
-    const isCheckedButtons = document.querySelectorAll("input[name='id']:checked");
-    const statusIds = formChangeMulti.querySelector("input[name='ids']");
+    } 
+
     if (isCheckedButtons.length > 0) {
+        if (selected.value == "delete-all") {
+            const isConfirm = confirm("Bạn chắc chắn muốn xóa các sản phẩm này?");
+            if (!isConfirm) {
+                return;
+            }
+        }
+
         let ids = [];
         isCheckedButtons.forEach(button => {
             ids.push(button.getAttribute("value"));
         });
         statusIds.value = ids.join(", ");
+        formChangeMulti.submit();
     } else {
-        event.preventDefault();
-        alert("Vui lòng chọn ít nhất một ô");
+        alert("Vui lòng chọn ít nhất một ô sản phẩm");
     }
 });
 // End Change Status Multi
