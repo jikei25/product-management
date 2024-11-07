@@ -2,6 +2,7 @@ const Product = require("../../models/product.model");
 const filter = require("../../helpers/filter");
 const search = require("../../helpers/search");
 const pagination = require("../../helpers/pagination");
+const systemConfig = require("../../config/system");
 
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
@@ -21,7 +22,7 @@ module.exports.index = async (req, res) => {
 
     const paginationObject = await pagination(req, Product, find);
 
-    const products = await Product.find(find).skip(paginationObject.skip).limit(paginationObject.limit);
+    const products = await Product.find(find).skip(paginationObject.skip).limit(paginationObject.limit).sort({ position: "desc" });
     res.render("admin/pages/product/index", {
         title: "Danh sách sản phẩm",
         products: products,
@@ -67,4 +68,28 @@ module.exports.deleteItem = async (req, res) => {
     await Product.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
     const backURL=req.header('Referer') || '/';
     res.redirect(backURL);
-};  
+}; 
+
+// [GET] /admin/products/create
+module.exports.createItem = async (req, res) => {
+    res.render("admin/pages/product/create");
+};
+
+// [POST] /admin/products/create
+module.exports.create = async (req, res) => {
+    
+    req.body.price = parseFloat(req.body.price);
+    req.body.discountPercentage = parseFloat(req.body.discountPercentage);
+    req.body.stock = parseInt(req.body.stock);
+    req.body.thumbnail = `/uploads/${req.file.filename}`
+    if (req.body.position == "") {
+        const totalProducts = await Product.countDocuments();
+        req.body.position = totalProducts + 1;
+    } else {
+        req.body.position = parseInt(req.body.position);
+    }
+    
+    const product = new Product(req.body);
+    await product.save();
+    res.redirect(`${systemConfig.prefixAdmin}/products`);
+};

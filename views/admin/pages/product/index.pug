@@ -18,7 +18,11 @@ block main
     .card.mb-3
         .card-header Sản phẩm
         .card-body
-            +change-multi-status
+            .row
+                .col-8
+                    +change-multi-status
+                .col-4 
+                    a(href=`${prefixAdmin}/products/create` class="btn btn-outline-success") + Thêm mới
             table.table.table-hover.table-sm
                 thead
                     tr
