@@ -50,8 +50,9 @@ block main
                                 else
                                     button(class="badge bg-danger" button-change-status data-status=item.status data-id=item.id) Dừng hoạt động
                             td 
-                                button(class="btn btn-warning btn-sm") Sửa
-                                button(class="btn btn-danger btn-sm ml-1" button-delete item-id=item.id) Xóa  
+                                a(class="btn btn-warning btn-sm" button-edit item-id=item.id href=`${prefixAdmin}/products/edit/${item.id}`) Sửa
+                                a(class="btn btn-danger btn-sm ml-1" button-delete item-id=item.id) Xóa  
+                                
             
     form(action="", method="post" id="form-change-status" path=`${prefixAdmin}/products/change-status`)
     form(action="", method="post" id="form-delete" path=`${prefixAdmin}/products/delete`) 

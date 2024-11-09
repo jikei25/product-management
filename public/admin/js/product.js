@@ -44,35 +44,37 @@ if (checkAllButton) {
     });
 }
 const formChangeMulti = document.querySelector("[form-change-multi]");
-formChangeMulti.addEventListener("submit", (event) => {
-    const selected = document.querySelector("#change-status-multi");
-    const isCheckedButtons = document.querySelectorAll("input[name='id']:checked");
-    const statusIds = formChangeMulti.querySelector("input[name='ids']"); // will be sent to BE
+if (formChangeMulti) {
+    formChangeMulti.addEventListener("submit", (event) => {
+        const selected = document.querySelector("#change-status-multi");
+        const isCheckedButtons = document.querySelectorAll("input[name='id']:checked");
+        const statusIds = formChangeMulti.querySelector("input[name='ids']"); // will be sent to BE
+        
+        event.preventDefault();
+        if (selected.value == "not-selected") {
+            alert("Vui lòng chọn ít nhất một hành động");
+            return;
+        } 
     
-    event.preventDefault();
-    if (selected.value == "not-selected") {
-        alert("Vui lòng chọn ít nhất một hành động");
-        return;
-    } 
-
-    if (isCheckedButtons.length > 0) {
-        if (selected.value == "delete-all") {
-            const isConfirm = confirm("Bạn chắc chắn muốn xóa các sản phẩm này?");
-            if (!isConfirm) {
-                return;
+        if (isCheckedButtons.length > 0) {
+            if (selected.value == "delete-all") {
+                const isConfirm = confirm("Bạn chắc chắn muốn xóa các sản phẩm này?");
+                if (!isConfirm) {
+                    return;
+                }
             }
+    
+            let ids = [];
+            isCheckedButtons.forEach(button => {
+                ids.push(button.getAttribute("value"));
+            });
+            statusIds.value = ids.join(", ");
+            formChangeMulti.submit();
+        } else {
+            alert("Vui lòng chọn ít nhất một ô sản phẩm");
         }
-
-        let ids = [];
-        isCheckedButtons.forEach(button => {
-            ids.push(button.getAttribute("value"));
-        });
-        statusIds.value = ids.join(", ");
-        formChangeMulti.submit();
-    } else {
-        alert("Vui lòng chọn ít nhất một ô sản phẩm");
-    }
-});
+    });
+}
 // End Change Status Multi
 
 // Delete Item
@@ -92,3 +94,20 @@ deleteButtons.forEach(button => {
     });
 });
 // End Delete Item
+
+// Preview Upload Image
+const previewUploadImage = document.querySelector("[upload-image]");
+if (previewUploadImage) {
+    const uploadImageInput = previewUploadImage.querySelector("[upload-image-input]");
+    const uploadImagePreview = previewUploadImage.querySelector("[upload-image-preview]");
+    
+    uploadImageInput.addEventListener("change", (event) => {
+        const img = event.target.files[0];
+        if (img) {
+            uploadImagePreview.src = URL.createObjectURL(img);
+        }
+    });
+}
+// End Preview Upload Image
+
+

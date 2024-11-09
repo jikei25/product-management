@@ -3,6 +3,7 @@ const filter = require("../../helpers/filter");
 const search = require("../../helpers/search");
 const pagination = require("../../helpers/pagination");
 const systemConfig = require("../../config/system");
+const { default: mongoose } = require("mongoose");
 
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
@@ -72,12 +73,13 @@ module.exports.deleteItem = async (req, res) => {
 
 // [GET] /admin/products/create
 module.exports.createItem = async (req, res) => {
-    res.render("admin/pages/product/create");
+    res.render("admin/pages/product/create", {
+        title: "Tạo mới sản phẩm"
+    });
 };
 
 // [POST] /admin/products/create
 module.exports.create = async (req, res) => {
-    
     req.body.price = parseFloat(req.body.price);
     req.body.discountPercentage = parseFloat(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
@@ -93,3 +95,47 @@ module.exports.create = async (req, res) => {
     await product.save();
     res.redirect(`${systemConfig.prefixAdmin}/products`);
 };
+
+// [GET] /admin/products/edit/:id
+module.exports.edit = async (req, res) => {
+    const id = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.redirect(`${systemConfig.prefixAdmin}/products`);
+        return;
+    }
+
+    const product = await Product.findOne({ _id: id, deleted: false });
+    if (!product) {
+        res.redirect(`${systemConfig.prefixAdmin}/products`);
+        return;
+    }
+
+    res.render("admin/pages/product/edit", {
+        title: "Chỉnh sửa sản phẩm",
+        item: product
+    });
+};
+
+// [POST] /admin/products/edit/:id
+module.exports.editPatch = async (req, res) => {
+    req.body.price = parseFloat(req.body.price);
+    req.body.discountPercentage = parseFloat(req.body.discountPercentage);
+    req.body.stock = parseInt(req.body.stock);
+    if (req.file) {
+        req.body.thumbnail = `/uploads/${req.file.filename}`;
+    }
+    if (req.body.position == "") {
+        const totalProducts = await Product.countDocuments();
+        req.body.position = totalProducts + 1;
+    } else {
+        req.body.position = parseInt(req.body.position);
+    }
+
+    try {
+        await Product.updateOne({ _id: req.params.id}, req.body);
+    } catch (error) {
+        res.redirect(`${systemConfig.prefixAdmin}/products/edit/${req.params.id}`);
+        return;
+    }
+    res.redirect(`${systemConfig.prefixAdmin}/products/edit/${req.params.id}`);
+}
