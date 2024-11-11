@@ -14,5 +14,5 @@ router.get("/create", controller.createItem);
 router.post("/create", upload.single('thumbnail'), validate.createProduct, controller.create); // single("...") must be the same at the name in the form 
 router.get("/edit/:id", controller.edit);
 router.patch("/edit/:id", upload.single('thumbnail'), validate.createProduct, controller.editPatch);
-
+router.get("/detail/:id", controller.detail);
 module.exports = router;
