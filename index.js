@@ -13,9 +13,10 @@ const adminRouter = require("./routes/admin/index.route");
 const systemConfig = require("./config/system");
 const methodOverride = require('method-override')
 
-app.set("views", "./views");
+app.set("views", `${__dirname}/views`);
 app.set("view engine", "pug");
-app.use(express.static("public"));
+
+app.use(express.static(`${__dirname}/public`));
 app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({ extended: false }));
 
