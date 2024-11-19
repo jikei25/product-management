@@ -67,7 +67,7 @@ module.exports.changeMulti = async (req, res) => {
 module.exports.deleteItem = async (req, res) => {
     const id = req.params.id;
     await Product.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
-    const backURL=req.header('Referer') || '/';
+    const backURL = req.header('Referer') || '/';
     res.redirect(backURL);
 }; 
 
@@ -80,10 +80,10 @@ module.exports.createItem = async (req, res) => {
 
 // [POST] /admin/products/create
 module.exports.create = async (req, res) => {
+    console.log(req.body);
     req.body.price = parseFloat(req.body.price);
     req.body.discountPercentage = parseFloat(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
-    req.body.thumbnail = `/uploads/${req.file.filename}`
     if (req.body.position == "") {
         const totalProducts = await Product.countDocuments();
         req.body.position = totalProducts + 1;
@@ -121,9 +121,6 @@ module.exports.editPatch = async (req, res) => {
     req.body.price = parseFloat(req.body.price);
     req.body.discountPercentage = parseFloat(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
-    if (req.file) {
-        req.body.thumbnail = `/uploads/${req.file.filename}`;
-    }
     if (req.body.position == "") {
         const totalProducts = await Product.countDocuments();
         req.body.position = totalProducts + 1;
