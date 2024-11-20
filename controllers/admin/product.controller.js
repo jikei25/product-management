@@ -10,6 +10,14 @@ module.exports.index = async (req, res) => {
     const filterStatus = filter(req);
     const searchObject = search(req);
     
+    let sort = {};
+
+    if (req.query.sortKey && req.query.sortValue) {
+        sort[req.query.sortKey] = req.query.sortValue;
+    } else {
+        sort.position = "desc";
+    }
+
     let find = {
         deleted: false
     };
@@ -23,7 +31,7 @@ module.exports.index = async (req, res) => {
 
     const paginationObject = await pagination(req, Product, find);
 
-    const products = await Product.find(find).skip(paginationObject.skip).limit(paginationObject.limit).sort({ position: "desc" });
+    const products = await Product.find(find).skip(paginationObject.skip).limit(paginationObject.limit).sort(sort);
     res.render("admin/pages/product/index", {
         title: "Danh sách sản phẩm",
         products: products,

@@ -110,4 +110,28 @@ if (previewUploadImage) {
 }
 // End Preview Upload Image
 
+// Sort
+const sort = document.querySelector("[sort]");
+if (sort) {
+    let url = new URL(location.href);
+    const sortSelect = sort.querySelector("[sort-select]");
+    const sortClear = sort.querySelector("[sort-clear]");
+
+    sortSelect.addEventListener("change", (event) => {
+        const [key, value] = event.target.value.split("-");
+        console.log(key);
+        console.log(value);
+        url.searchParams.set("sortKey", key);
+        url.searchParams.set("sortValue", value);
+        location.href = url.href;
+    });
+    
+    sortClear.addEventListener("click", () => {
+        url.searchParams.delete("sortKey");
+        url.searchParams.delete("sortValue");
+        location.href = url.href;
+    });
+}
+
+// End Sort
 
