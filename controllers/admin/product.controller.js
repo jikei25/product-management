@@ -88,7 +88,6 @@ module.exports.createItem = async (req, res) => {
 
 // [POST] /admin/products/create
 module.exports.create = async (req, res) => {
-    console.log(req.body);
     req.body.price = parseFloat(req.body.price);
     req.body.discountPercentage = parseFloat(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
