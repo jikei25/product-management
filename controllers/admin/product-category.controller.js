@@ -1,50 +1,39 @@
 const ProductCategory = require("../../models/product-category.model");
 const systemConfig = require("../../config/system");
-
+const createTree = require("../../helpers/createTree");
 // [GET] /admin/product-categories/
 module.exports.index = async (req, res) => {
     let find = {
         deleted: false
     };
     const categories = await ProductCategory.find(find);
+    const newCategories = createTree(categories);
     res.render("admin/pages/product-category/index", {
         title: "Danh mục sản phẩm",
-        categories: categories,
+        categories: newCategories,
     });
+
 };
 
 // [GET] /admin/product-categories/create
 module.exports.createCategory = async (req, res) => {
-    // function createTree(arr, parentId="") {
-    //     let tree = [];
-    //     arr.forEach(element => {
-    //        if (element.parentId === parentId) {
-    //             const children = createTree(arr, element.parentId);
-    //             if (children.length > 0) {
-    //                 element.children = children;
-    //             }
-    //             tree.push(element);
-    //        } 
-    //     });
-    //     return tree;
-    // }
-    // let find = {
-    //     deleted: false
-    // };
     
-    // const categories = await ProductCategory.find(find);
-    // if (categories.length > 0) {
-    //     console.log(createTree(categories));
-    // }
-    // console.log(createTree(categories));
+    let find = {
+        deleted: false
+    };
+    
+    const categories = await ProductCategory.find(find);
+    const newCategories = createTree(categories);
+
     res.render("admin/pages/product-category/create", {
         title: "Tạo danh mục sản phẩm",
+        categories: newCategories
     });
 };
 
 // [POST] /admin/product-categories/create
 module.exports.create = async (req, res) => {
-    // console.log(req.body);
+    console.log(req.body);
     if (req.body.position == "") {
         const total = await ProductCategory.countDocuments();
         req.body.position = total + 1;
@@ -54,4 +43,25 @@ module.exports.create = async (req, res) => {
     const category = new ProductCategory(req.body);
     await category.save();
     res.redirect(`${systemConfig.prefixAdmin}/product-categories`);
+};
+
+// [GET] /admin/product-categories/edit/:id
+module.exports.edit = async (req, res) => {
+    const id = req.params.id;
+
+    const category = await ProductCategory.findOne({
+        _id: id,
+        deleted: false,
+    });
+
+    const categories = await ProductCategory.find({
+        deleted: false,
+    });
+    const newCategories = createTree(categories);
+    console.log(category);
+    res.render("admin/pages/product-category/edit", {
+        title: "Chỉnh sửa danh mục sản phẩm",
+        categories: newCategories,
+        category: category,
+    });
 };

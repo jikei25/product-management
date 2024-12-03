@@ -1,10 +1,11 @@
 const Product = require("../../models/product.model");
+const ProductCategory = require("../../models/product-category.model");
 const filter = require("../../helpers/filter");
 const search = require("../../helpers/search");
 const pagination = require("../../helpers/pagination");
 const systemConfig = require("../../config/system");
 const { default: mongoose } = require("mongoose");
-
+const createTree = require("../../helpers/createTree");
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
     const filterStatus = filter(req);
@@ -81,8 +82,14 @@ module.exports.deleteItem = async (req, res) => {
 
 // [GET] /admin/products/create
 module.exports.createItem = async (req, res) => {
+    const categories = await ProductCategory.find({
+        deleted: false,
+    });
+
+    const newCategories = createTree(categories);
     res.render("admin/pages/product/create", {
-        title: "Tạo mới sản phẩm"
+        title: "Tạo mới sản phẩm",
+        categories: newCategories
     });
 };
 
@@ -97,7 +104,7 @@ module.exports.create = async (req, res) => {
     } else {
         req.body.position = parseInt(req.body.position);
     }
-    
+
     const product = new Product(req.body);
     await product.save();
     res.redirect(`${systemConfig.prefixAdmin}/products`);
@@ -123,7 +130,7 @@ module.exports.edit = async (req, res) => {
     });
 };
 
-// [POST] /admin/products/edit/:id
+// [PATCH] /admin/products/edit/:id
 module.exports.editPatch = async (req, res) => {
     req.body.price = parseFloat(req.body.price);
     req.body.discountPercentage = parseFloat(req.body.discountPercentage);
@@ -154,9 +161,9 @@ module.exports.detail = async (req, res) => {
     }
     const product = await Product.findOne({
         _id: id,
-        status: "active",
         deleted: false
     });
+    console.log(product);
     if (!product) {
         backURL=req.header('Referer') || '/';
         res.redirect(backURL);

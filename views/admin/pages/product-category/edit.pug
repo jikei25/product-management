@@ -4,7 +4,7 @@ block main
   h1 #{title}
 
   form(
-    action=`${prefixAdmin}/product-categories/create`
+    action=`${prefixAdmin}/product-categories/edit/${category.id}?_method=PATCH`
     method="POST"
     enctype="multipart/form-data"
   )
@@ -16,13 +16,14 @@ block main
         id="title"
         name="title"
         required
+        value=category.title
       )
     div(class="form-group")
       label(for="title") Danh mục cha
       select(name="parentId" id="parent_id" class="form-select")
         option(value="") -- Chọn danh mục cha --
         if (categories)
-          +select-tree(categories)   
+          +select-tree(categories, 1, category.parentId)   
     div(class="form-group")
       label(for="desc") Mô tả
       textarea(
@@ -61,6 +62,7 @@ block main
         name="position"
         placeholder="Tự động tăng"
         min="1"
+        value=category.position
       )
     div(class="form-group form-check form-check-inline")
       input(
@@ -69,7 +71,7 @@ block main
         id="statusActive"
         name="status"
         value="active"
-        checked
+        checked=(category.status === "active") ? true : false
       )
       label(for="statusActive" class="form-check-label") Hoạt động
     div(class="form-group form-check form-check-inline")
@@ -79,13 +81,14 @@ block main
         id="statusInActive"
         name="status"
         value="inactive"
+        checked=(category.status === "inactive") ? true : false
       )
       label(for="statusInActive" class="form-check-label") Dừng hoạt động
     div(class="form-group")
       button(
         type="submit"
         class="btn btn-primary"
-      ) Tạo mới
+      ) Cập nhật
 
     script(type="application/javascript" src= "/tinymce/tinymce.min.js")
     script(type="application/javascript" src="/admin/js/tinymce.config.js") 
