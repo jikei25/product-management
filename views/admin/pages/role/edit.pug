@@ -1,0 +1,34 @@
+extends ../../layouts/default.pug
+
+block main
+  h1 #{title}
+
+  form(
+    action=`${prefixAdmin}/roles/edit/${item.id}?_method=PATCH`
+    method="POST"
+  )
+    div(class="form-group")
+      label(for="title") Tiêu đề
+      input(
+        type="text"
+        class="form-control"
+        id="title"
+        name="title"
+        required
+        value=item.title
+      )
+    div(class="form-group")
+      label(for="desc") Mô tả
+      input(
+        type="text"
+        class="form-control"
+        id="desc"
+        name="description"
+        value=item.description
+      )
+    br    
+    div(class="form-group")
+      button(
+        type="submit"
+        class="btn btn-primary"
+      ) Cập nhật

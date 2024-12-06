@@ -6,6 +6,7 @@ const pagination = require("../../helpers/pagination");
 const systemConfig = require("../../config/system");
 const { default: mongoose } = require("mongoose");
 const createTree = require("../../helpers/createTree");
+
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
     const filterStatus = filter(req);
