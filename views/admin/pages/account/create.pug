@@ -1,68 +1,73 @@
 extends ../../layouts/default.pug
-include ../../mixins/select-tree.pug
+
 block main
-  h1 #{title}
+  h1(class="mb-4") #{title}
 
   form(
-    action=`${prefixAdmin}/product-categories/create`
+    action=`${prefixAdmin}/accounts/create`
     method="POST"
-    enctype="multipart/form-data"
+		enctype="multipart/form-data"
   )
     div(class="form-group")
-      label(for="title") Tiêu đề
+      label(for="fullName") Họ tên *
       input(
         type="text"
         class="form-control"
-        id="title"
-        name="title"
+        id="fullName"
+        name="fullName"
         required
       )
     div(class="form-group")
-      label(for="title") Danh mục cha
-      select(name="parentId" id="parent_id" class="form-select")
-        option(value="") -- Chọn danh mục cha --
-        if (categories)
-          +select-tree(categories, 1, "")   
+      label(for="email") Email *
+      input(
+        type="email"
+        class="form-control"
+        id="email"
+        name="email"
+        required
+      )
     div(class="form-group")
-      label(for="desc") Mô tả
-      textarea(
+      label(for="password") Mật khẩu *
+      input(
+        type="password"
+        class="form-control"
+        id="password"
+        name="password"
+        required
+      )
+    div(class="form-group")
+      label(for="phone") Số điện thoại
+      input(
         type="text"
         class="form-control"
-        id="desc"
-        name="description"
-        rows="5"
-        textarea-mce
+        id="phone"
+        name="phone"
       )
     div(
       class="form-group"
       upload-image
     )
-      label(for="thumbnail") Ảnh
+      label(for="avatar") Avatar
       br
       input(
         type="file"
         class="form-control-file"
-        id="thumbnail"
-        name="thumbnail"
+        id="avatar"
+        name="avatar"
         accept="image/*"
         upload-image-input
       )
-      br
       img(
         src=""
         class="image-preview"
         upload-image-preview
       )
     div(class="form-group")
-      label(for="position") Vị trí
-      input(
-        type="number"
-        class="form-control"
-        id="position"
-        name="position"
-        placeholder="Tự động tăng"
-        min="1"
-      )
+      label(for="role_id") Nhóm quyền
+      select(name="role_id" id="role_id" class="form-control")
+        option(disabled) -- Chọn --
+        each role in roles
+          option(value=role.id) #{role.title}
     div(class="form-group form-check form-check-inline")
       input(
         type="radio"
@@ -87,6 +92,3 @@ block main
         type="submit"
         class="btn btn-primary"
       ) Tạo mới
-
-    script(type="application/javascript" src= "/tinymce/tinymce.min.js")
-    script(type="application/javascript" src="/admin/js/tinymce.config.js") 

@@ -95,20 +95,7 @@ deleteButtons.forEach(button => {
 });
 // End Delete Item
 
-// Preview Upload Image
-const previewUploadImage = document.querySelector("[upload-image]");
-if (previewUploadImage) {
-    const uploadImageInput = previewUploadImage.querySelector("[upload-image-input]");
-    const uploadImagePreview = previewUploadImage.querySelector("[upload-image-preview]");
-    
-    uploadImageInput.addEventListener("change", (event) => {
-        const img = event.target.files[0];
-        if (img) {
-            uploadImagePreview.src = URL.createObjectURL(img);
-        }
-    });
-}
-// End Preview Upload Image
+
 
 // Sort
 const sort = document.querySelector("[sort]");

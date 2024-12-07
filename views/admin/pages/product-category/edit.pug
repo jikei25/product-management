@@ -4,9 +4,9 @@ block main
   h1 #{title}
 
   form(
-    action=`${prefixAdmin}/product-categories/edit/${category.id}?_method=PATCH`
-    method="POST"
-    enctype="multipart/form-data"
+  action=`${prefixAdmin}/product-categories/edit/${category.id}?_method=PATCH`
+  method="POST"
+  enctype="multipart/form-data"
   )
     div(class="form-group")
       label(for="title") Tiêu đề
@@ -48,8 +48,9 @@ block main
         accept="image/*"
         upload-image-input
       )
+      br
       img(
-        src=""
+        src=category.thumbnail ? category.thumbnail : ""
         class="image-preview"
         upload-image-preview
       )
@@ -90,5 +91,5 @@ block main
         class="btn btn-primary"
       ) Cập nhật
 
-    script(type="application/javascript" src= "/tinymce/tinymce.min.js")
-    script(type="application/javascript" src="/admin/js/tinymce.config.js") 
+  script(type="application/javascript" src= "/tinymce/tinymce.min.js")
+  script(type="application/javascript" src="/admin/js/tinymce.config.js") 

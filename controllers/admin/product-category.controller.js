@@ -57,11 +57,26 @@ module.exports.edit = async (req, res) => {
     const categories = await ProductCategory.find({
         deleted: false,
     });
+
     const newCategories = createTree(categories);
-    console.log(category);
     res.render("admin/pages/product-category/edit", {
         title: "Chỉnh sửa danh mục sản phẩm",
         categories: newCategories,
         category: category,
     });
+};
+
+// [PATCH] /admin/product-categories/edit/:id
+module.exports.editPatch = async (req, res) => {
+    const id = req.params.id;
+    try {
+        console.log(req.body);
+        await ProductCategory.updateOne({ _id: id }, req.body);
+    } catch (error) {
+        const backURL=req.header('Referer') || '/';
+        res.redirect(backURL);
+        return;
+    }
+
+    res.redirect(`${systemConfig.prefixAdmin}/product-categories/edit/${id}`);
 };

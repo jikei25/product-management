@@ -47,3 +47,27 @@ if (paginationButtons) {
     });
 }
 // End Pagination
+
+// Alert-message
+const alertMessage = document.querySelector("[alert-message]");
+if(alertMessage) {
+  setTimeout(() => {
+    alertMessage.style.display = "none";
+  }, 3000);
+}
+// End alert-message
+
+// Preview Upload Image
+const previewUploadImage = document.querySelector("[upload-image]");
+if (previewUploadImage) {
+    const uploadImageInput = previewUploadImage.querySelector("[upload-image-input]");
+    const uploadImagePreview = previewUploadImage.querySelector("[upload-image-preview]");
+    
+    uploadImageInput.addEventListener("change", (event) => {
+        const img = event.target.files[0];
+        if (img) {
+            uploadImagePreview.src = URL.createObjectURL(img);
+        }
+    });
+}
+// End Preview Upload Image

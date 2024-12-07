@@ -144,7 +144,7 @@ module.exports.editPatch = async (req, res) => {
     }
 
     try {
-        await Product.updateOne({ _id: req.params.id}, req.body);
+        await Product.updateOne({ _id: req.params.id }, req.body);
     } catch (error) {
         res.redirect(`${systemConfig.prefixAdmin}/products/edit/${req.params.id}`);
         return;
@@ -156,17 +156,17 @@ module.exports.editPatch = async (req, res) => {
 module.exports.detail = async (req, res) => {
     const id = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        backURL=req.header('Referer') || '/';
-        res.redirect("/products");
+        const backURL=req.header('Referer') || '/';
+        res.redirect(backURL);
         return;
     }
     const product = await Product.findOne({
         _id: id,
         deleted: false
     });
-    console.log(product);
+
     if (!product) {
-        backURL=req.header('Referer') || '/';
+        const backURL=req.header('Referer') || '/';
         res.redirect(backURL);
         return;
     }
