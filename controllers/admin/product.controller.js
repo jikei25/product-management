@@ -6,6 +6,7 @@ const pagination = require("../../helpers/pagination");
 const systemConfig = require("../../config/system");
 const { default: mongoose } = require("mongoose");
 const createTree = require("../../helpers/createTree");
+const Account = require("../../models/account.model");
 
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
@@ -34,6 +35,13 @@ module.exports.index = async (req, res) => {
     const paginationObject = await pagination(req, Product, find);
 
     const products = await Product.find(find).skip(paginationObject.skip).limit(paginationObject.limit).sort(sort);
+    for (const product of products) {
+        const user = await Account.findOne({
+            _id: product.createdBy.accountId
+        });
+        if (user)
+            product.createdBy.accountId = user.fullName
+    }
     res.render("admin/pages/product/index", {
         title: "Danh sách sản phẩm",
         products: products,
@@ -76,7 +84,7 @@ module.exports.changeMulti = async (req, res) => {
 // [DELETE] /admin/products/delete/:id
 module.exports.deleteItem = async (req, res) => {
     const id = req.params.id;
-    await Product.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
+    await Product.updateOne({ _id: id }, { deleted: true, deletedBy: { accountId: res.locals.user.id, deletedAt: Date.now() } });
     const backURL = req.header('Referer') || '/';
     res.redirect(backURL);
 }; 
@@ -105,7 +113,9 @@ module.exports.create = async (req, res) => {
     } else {
         req.body.position = parseInt(req.body.position);
     }
-
+    req.body.createdBy = {
+        accountId: res.locals.user.id
+    }
     const product = new Product(req.body);
     await product.save();
     res.redirect(`${systemConfig.prefixAdmin}/products`);

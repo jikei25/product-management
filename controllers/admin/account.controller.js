@@ -11,7 +11,6 @@ module.exports.index = async (req, res) => {
     };
 
     const records = await Account.find(find).select("-password -token");
-    console.log(records);
     for (const record of records) {
         const role = await Role.findById(record.role_id);
         if (role) {

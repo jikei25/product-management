@@ -3,74 +3,81 @@ include ../../mixins/filter
 include ../../mixins/search
 include ../../mixins/pagination
 include ../../mixins/change-multi
+include ../../mixins/parse-time
 
 block main
-    h1 #{title}
-    .card.mb-3
-        .card-header Bộ lọc và Tìm kiếm
+    if(role.permissions.includes("products_view"))
+        h1 #{title}
+        .card.mb-3
+            .card-header Bộ lọc và Tìm kiếm
+            .card-body
+                .row
+                    .col-6
+                        +filter(buttons)
+                    .col-6  
+                        +search(keyword)
+        .card.mb-3
+        .card-header Sắp xếp
         .card-body
             .row
-                .col-6
-                    +filter(buttons)
-                .col-6  
-                    +search(keyword)
-    .card.mb-3
-      .card-header Sắp xếp
-      .card-body
-        .row
-          .col-4
-            div(sort)
-                select(class="form-select" sort-select)
-                    option(value="position-desc") Vị trí giảm dần
-                    option(value="position-asc") Vị trí tăng dần
-                    option(value="price-desc") Giá giảm dần
-                    option(value="price-asc") Giá tăng dần
-                    option(value="title-desc") Tiêu đề từ Z đến A
-                    option(value="title-asc") Tiêu đề từ A đến Z
-                button(class="btn btn-danger mt-2" sort-clear) Clear      
-    .card.mb-3
-        .card-header Sản phẩm
-        .card-body
-            .row
-                .col-8
-                    +change-multi-status
-                .col-4 
-                    a(href=`${prefixAdmin}/products/create` class="btn btn-outline-success") + Thêm mới
-            table.table.table-hover.table-sm
-                thead
-                    tr
-                        th
-                            input(type="checkbox", name="checkall")
-                        th STT
-                        th Hình ảnh
-                        th Tiêu đề
-                        th Giá
-                        th Trạng thái
-                        th Hành động
-                tbody
-                    each item, index in products 
+            .col-4
+                div(sort)
+                    select(class="form-select" sort-select)
+                        option(value="position-desc") Vị trí giảm dần
+                        option(value="position-asc") Vị trí tăng dần
+                        option(value="price-desc") Giá giảm dần
+                        option(value="price-asc") Giá tăng dần
+                        option(value="title-desc") Tiêu đề từ Z đến A
+                        option(value="title-asc") Tiêu đề từ A đến Z
+                    button(class="btn btn-danger mt-2" sort-clear) Clear      
+        .card.mb-3
+            .card-header Sản phẩm
+            .card-body
+                .row
+                    .col-8
+                        +change-multi-status
+                    .col-4 
+                        a(href=`${prefixAdmin}/products/create` class="btn btn-outline-success") + Thêm mới
+                table.table.table-hover.table-sm
+                    thead
                         tr
-                            td 
-                                input(type="checkbox" name="id" value=item.id)
-                            td #{pagination.skip + index + 1}
-                            td 
-                                img(src=item.thumbnail alt=item.title width=100 height=auto)
-                            td 
-                                a(href=`${prefixAdmin}/products/detail/${item._id}`) #{item.title}
-                            td #{item.price}$
-                            td 
-                                if (item.status=="active")
-                                    button(class="badge bg-success" button-change-status data-status=item.status data-id=item.id) Hoạt động
-                                else
-                                    button(class="badge bg-danger" button-change-status data-status=item.status data-id=item.id) Dừng hoạt động
-                            td 
-                                a(class="btn btn-warning btn-sm" button-edit item-id=item.id href=`${prefixAdmin}/products/edit/${item.id}`) Sửa
-                                a(class="btn btn-danger btn-sm ms-1" button-delete item-id=item.id) Xóa  
-                                
-            
-    form(action="", method="post" id="form-change-status" path=`${prefixAdmin}/products/change-status`)
-    form(action="", method="post" id="form-delete" path=`${prefixAdmin}/products/delete`) 
-    +pagination(pagination)
-    script(src="/admin/js/product.js") 
+                            th
+                                input(type="checkbox", name="checkall")
+                            th STT
+                            th Hình ảnh
+                            th Tiêu đề
+                            th Giá
+                            th Trạng thái
+                            th Nguời tạo
+                            th Hành động
+                    tbody
+                        each item, index in products 
+                            tr
+                                td 
+                                    input(type="checkbox" name="id" value=item.id)
+                                td #{pagination.skip + index + 1}
+                                td 
+                                    img(src=item.thumbnail alt=item.title width=100 height=auto)
+                                td 
+                                    a(href=`${prefixAdmin}/products/detail/${item._id}`) #{item.title}
+                                td #{item.price}$
+                                td 
+                                    if (item.status=="active")
+                                        button(class="badge bg-success" button-change-status data-status=item.status data-id=item.id) Hoạt động
+                                    else
+                                        button(class="badge bg-danger" button-change-status data-status=item.status data-id=item.id) Dừng hoạt động
+                                td 
+                                    p #{item.createdBy.accountId}
+                                    if (item.createdBy.createdAt)
+                                        +formatDateTime(item.createdBy.createdAt)
+                                td 
+                                    a(class="btn btn-warning btn-sm" button-edit item-id=item.id href=`${prefixAdmin}/products/edit/${item.id}`) Sửa
+                                    a(class="btn btn-danger btn-sm ms-1" button-delete item-id=item.id) Xóa  
+                                    
+                
+        form(action="", method="post" id="form-change-status" path=`${prefixAdmin}/products/change-status`)
+        form(action="", method="post" id="form-delete" path=`${prefixAdmin}/products/delete`) 
+        +pagination(pagination)
+        script(src="/admin/js/product.js") 
 
         
