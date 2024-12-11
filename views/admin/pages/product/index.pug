@@ -49,6 +49,7 @@ block main
                             th Giá
                             th Trạng thái
                             th Nguời tạo
+                            th Cập nhật bởi
                             th Hành động
                     tbody
                         each item, index in products 
@@ -70,6 +71,10 @@ block main
                                     p #{item.createdBy.accountId}
                                     if (item.createdBy.createdAt)
                                         +formatDateTime(item.createdBy.createdAt)
+                                td
+                                    //- - const updatedAt = item.updatedBy[].
+                                    if (item.userUpdated)
+                                        p #{item.userUpdated}
                                 td 
                                     a(class="btn btn-warning btn-sm" button-edit item-id=item.id href=`${prefixAdmin}/products/edit/${item.id}`) Sửa
                                     a(class="btn btn-danger btn-sm ms-1" button-delete item-id=item.id) Xóa  

@@ -86,7 +86,7 @@ module.exports.edit = async (req, res) => {
     });
 };
 
-// [POST] /admin/accounts/edit/:id
+// [PATCH] /admin/accounts/edit/:id
 module.exports.editPatch = async (req, res) => {
     const checkEmailExist = await Account.findOne({
         deleted: false,

@@ -39,9 +39,21 @@ module.exports.index = async (req, res) => {
         const user = await Account.findOne({
             _id: product.createdBy.accountId
         });
-        if (user)
-            product.createdBy.accountId = user.fullName
+        if (user) product.createdBy.accountId = user.fullName;
+
+        if (product.updatedBy.accountId) {
+            const accountId = product.updatedBy.accountId.slice(-1)[0];
+            const userUpdated = await Account.findOne({
+                _id: accountId
+            });
+            if (userUpdated) {
+                product.userUpdated = userUpdated.fullName;
+            }
+        }     
     }
+
+    
+
     res.render("admin/pages/product/index", {
         title: "Danh sách sản phẩm",
         products: products,
@@ -55,8 +67,11 @@ module.exports.index = async (req, res) => {
 module.exports.changeStatus = async(req, res) => {
     const status = req.params.status;
     const id = req.params.id;
-
-    await Product.updateOne({_id: id}, {status: status});
+    const updatedBy = {
+        accountId: res.locals.user.id,
+        updatedAt: Date.now(),
+    };
+    await Product.updateOne({ _id: id }, { status: status, $push: { updatedBy: updatedBy } });
     
     const backURL=req.header('Referer') || '/';
     res.redirect(backURL);
@@ -66,10 +81,14 @@ module.exports.changeStatus = async(req, res) => {
 module.exports.changeMulti = async (req, res) => {
     const status = req.body.type;
     const ids = req.body.ids.split(", ");
+    const updatedBy = {
+        accountId: res.locals.user.id,
+        updatedAt: Date.now(),
+    };
     switch (status) {
         case "active":
         case "inactive":
-            await Product.updateMany({ _id: ids }, { status: status });
+            await Product.updateMany({ _id: ids }, { status: status, $push: { updatedBy: updatedBy } });
             break;
         case "delete-all":
             await Product.updateMany({ _id: ids }, { deleted: true, deletedAt: new Date() });
@@ -123,6 +142,11 @@ module.exports.create = async (req, res) => {
 
 // [GET] /admin/products/edit/:id
 module.exports.edit = async (req, res) => {
+    const categories = await ProductCategory.find({
+        deleted: false,
+    });
+
+    const newCategories = createTree(categories);
     const id = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(id)) {
         res.redirect(`${systemConfig.prefixAdmin}/products`);
@@ -137,7 +161,8 @@ module.exports.edit = async (req, res) => {
 
     res.render("admin/pages/product/edit", {
         title: "Chỉnh sửa sản phẩm",
-        item: product
+        item: product,
+        categories: newCategories,
     });
 };
 
@@ -152,9 +177,16 @@ module.exports.editPatch = async (req, res) => {
     } else {
         req.body.position = parseInt(req.body.position);
     }
+    const updatedBy = {
+        accountId: res.locals.user.id,
+        updatedAt: Date.now(),
+    };
 
     try {
-        await Product.updateOne({ _id: req.params.id }, req.body);
+        await Product.updateOne({ _id: req.params.id }, {
+            ...req.body,
+            $push: { updatedBy: updatedBy }
+        });
     } catch (error) {
         res.redirect(`${systemConfig.prefixAdmin}/products/edit/${req.params.id}`);
         return;
