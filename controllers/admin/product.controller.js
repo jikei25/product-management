@@ -123,6 +123,10 @@ module.exports.createItem = async (req, res) => {
 
 // [POST] /admin/products/create
 module.exports.create = async (req, res) => {
+    const permissions = res.locals.role.permissions;
+    if (!permissions.includes("products_create")) {
+        return;
+    }
     req.body.price = parseFloat(req.body.price);
     req.body.discountPercentage = parseFloat(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);

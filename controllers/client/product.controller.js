@@ -1,5 +1,7 @@
-const { default: mongoose } = require("mongoose");
 const Product = require("../../models/product.model");
+const ProductCategory = require("../../models/product-category.model");
+const getSubCategory = require("../../helpers/getSubCategory");
+const calculatePrice = require("../../helpers/calculatePrice");
 
 // [GET] /products
 module.exports.index = async (req, res) => {
@@ -17,26 +19,61 @@ module.exports.index = async (req, res) => {
     });
 };
 
-// [GET] /products/detail/:id
+// [GET] /products/detail/:slug
 module.exports.detail = async (req, res) => {
-    const id = req.params.id;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        backURL=req.header('Referer') || '/';
-        res.redirect("/products");
-        return;
-    }
+    const slug = req.params.slug;
     const product = await Product.findOne({
-        _id: id,
+        slug: slug,
         status: "active",
         deleted: false
     });
     if (!product) {
-        backURL=req.header('Referer') || '/';
+        const backURL=req.header('Referer') || '/';
         res.redirect(backURL);
         return;
     }
+    if (product.categoryId) {
+        const category = await ProductCategory.findOne({
+            _id: product.categoryId,
+            deleted: false,
+            status: "active",
+        });
+        product.category = category;
+    }
+    const newProduct = calculatePrice.price(product);
     res.render("client/pages/product/detail", {
         title: "Chi tiết sản phẩm",
-        product: product
+        product: newProduct
+    });
+};
+
+// [GET] /products/:slug
+module.exports.getProductByCategory = async (req, res) => {
+    const slug = req.params.slug;
+    const category = await ProductCategory.findOne({
+        slug: slug,
+        deleted: false,
+        status: "active",
+    })
+
+    if (!category) {
+        const backURL=req.header('Referer') || '/';
+        res.redirect(backURL);
+        return;
+    }
+    
+    let allSub = [];
+    await getSubCategory.getCategory(category.id, allSub);
+    const subCategory = allSub.map(item => item.id);
+    
+    const products = await Product.find({
+        categoryId: { $in: [category.id, ...subCategory] },
+        deleted: false,
+        status: "active",
+    }).sort({ position: "desc" });
+    const newProducts = calculatePrice.newPrice(products);
+    res.render("client/pages/product/index", {
+        title: category.title,
+        products: newProducts
     });
 };

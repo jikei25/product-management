@@ -1,4 +1,12 @@
 extends ../../layouts/default
 include ../../mixins/box-head
-block main 
-    +box-head(title)    
+include ../../mixins/product-item
+
+block main
+  .container.my-3
+    +box-head("Sản phẩm nổi bật")
+
+    .row
+      each item in featuredProducts
+        +product-item(item)
+
