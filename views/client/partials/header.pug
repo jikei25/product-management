@@ -15,3 +15,5 @@ header.header
                         li(class="sub-menu")
                             a(href="/products") Sản phẩm
                             +sub-menu(categoryRecords) 
+                        li
+                            a(href="#") Giỏ hàng(#{miniCart ? miniCart.totalQuantity : 0})
